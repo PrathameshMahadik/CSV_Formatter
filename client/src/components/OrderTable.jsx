@@ -1,26 +1,24 @@
-//
-
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/joy/Box";
 import Table from "@mui/joy/Table";
 import Typography from "@mui/joy/Typography";
 import Sheet from "@mui/joy/Sheet";
-import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
 import IconButton from "@mui/joy/IconButton";
 import Link from "@mui/joy/Link";
 import Tooltip from "@mui/joy/Tooltip";
 import Select from "@mui/joy/Select";
 import Option from "@mui/joy/Option";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { visuallyHidden } from "@mui/utils";
 import axios from "axios";
-import { Button, CssBaseline } from "@mui/material";
+import { Button, CssBaseline, Input } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { EditIcon, VisibilityIcon } from "../components/material";
+import { useAuth } from "../contexts/useAuth";
+import FormControl from "@mui/joy/FormControl";
+import FormLabel from "@mui/joy/FormLabel";
 
 function labelDisplayedRows({ from, to, count }) {
   return `${from}–${to} of ${count !== -1 ? count : `more than ${to}`}`;
@@ -36,18 +34,12 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-// type Order = 'asc' | 'desc';
-
 function getComparator(order, orderBy) {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -67,12 +59,6 @@ const headCells = [
     disablePadding: true,
     label: "Index",
   },
-  //   {
-  //     id: 'userId',
-  //     numeric: false,
-  //     disablePadding: false,
-  //     label: 'User Id',
-  //   },
   {
     id: "fname",
     numeric: false,
@@ -118,14 +104,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
+  const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -189,117 +168,70 @@ function EnhancedTableHead(props) {
   );
 }
 
-// function EnhancedTableToolbar(props) {
-//   const { numSelected } = props;
-
-//   return (
-//     <Box
-//       sx={{
-//         display: 'flex',
-//         alignItems: 'center',
-//         py: 1,
-//         pl: { sm: 2 },
-//         pr: { xs: 1, sm: 1 },
-//         ...(numSelected > 0 && {
-//           bgcolor: 'background.level1',
-//         }),
-//         borderTopLeftRadius: 'var(--unstable_actionRadius)',
-//         borderTopRightRadius: 'var(--unstable_actionRadius)',
-//       }}
-//     >
-//       {numSelected > 0 ? (
-//         <Typography sx={{ flex: '1 1 100%' }} component="div">
-//           {numSelected} selected
-//         </Typography>
-//       ) : (
-//         <Typography
-//           level="body-lg"
-//           sx={{ flex: '1 1 100%' }}
-//           id="tableTitle"
-//           component="div"
-//         >
-//           Nutrition
-//         </Typography>
-//       )}
-
-//       {numSelected > 0 ? (
-//         <Tooltip title="Delete">
-//           <IconButton size="sm" color="danger" variant="solid">
-//             <DeleteIcon />
-//           </IconButton>
-//         </Tooltip>
-//       ) : (
-//         <Tooltip title="Filter list">
-//           <IconButton size="sm" variant="outlined" color="neutral">
-//             <FilterListIcon />
-//           </IconButton>
-//         </Tooltip>
-//       )}
-//     </Box>
-//   );
-// }
-
 export default function OrderTable() {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("calories");
-  const [selected, setSelected] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
+  const { data, setData } = useAuth();
+  const [countAll, setAllCount] = useState(15);
   const navigate = useNavigate();
-
-  const fetchData = useCallback(async () => {
+  const [search, setSearch] = useState(false);
+  let count = countAll === 0 ? 0 : page * rowsPerPage;
+  
+  const fetchData = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:4999/data?_limit=${rowsPerPage}&_page=${page}`
-      );
+      const response = await axios.get(`http://localhost:4999/data/`, {
+        params: {
+          _limit: rowsPerPage,
+          _page: page+1,
+        },
+      });
       setData(response.data.data);
+      setAllCount(response.data.count);
+      console.log("🚀 ~ fetchData ~ response.data.data:", response.data.data);
     } catch (error) {
       console.log("🚀 ~ fetchData ~ error:", error);
     }
-  }, [page, rowsPerPage]);
+  };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (search) {
+      handleSearch();
+    } else {
+      fetchData();
+    }
+  }, [search, page, rowsPerPage]);
+
+  const handleSearch = async () => {
+    setSearch(true);
+    try {
+      const response = await axios.get(`http://localhost:4999/search/`, {
+        params: {
+          _limit: rowsPerPage,
+          _page: page+1,
+          fname: searchText,
+        },
+      });
+      setData(response.data.data);
+      setAllCount(response.data.count);
+    } catch (error) {
+      console.log("🚀 ~ fetchData ~ error:", error);
+    }
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = data.map((n) => n.name);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelected(newSelected);
-  };
+  console.log("🚀 ~ handleChangePage ~ newPage:", page);
 
   const handleChangePage = (newPage) => {
     setPage(newPage);
+    console.log("🚀 ~ handleChangePage ~ newPage:", newPage);
   };
 
   const handleChangeRowsPerPage = (event, newValue) => {
@@ -308,19 +240,24 @@ export default function OrderTable() {
   };
 
   const getLabelDisplayedRowsTo = () => {
-    if (data.length === -1) {
+    if (countAll === -1) {
       return (page + 1) * rowsPerPage;
     }
     return rowsPerPage === -1
-      ? data.length
-      : Math.min(data.length, (page + 1) * rowsPerPage);
+      ? countAll
+      : Math.min(countAll, (page + 1) * rowsPerPage);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const handleSearchInput = (e) => {
+    setSearchText(e.target.value);
+    if (e.target.value < 1) {
+      setSearch(false);
+      // fetchData();
+    }
+  };
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - countAll) : 0;
 
   return (
     <Box>
@@ -330,6 +267,7 @@ export default function OrderTable() {
           display: "flex",
           mb: 1,
           gap: 1,
+          marginleft: "50px",
           flexDirection: { xs: "column", sm: "row" },
           alignItems: { xs: "start", sm: "center" },
           flexWrap: "wrap",
@@ -339,6 +277,12 @@ export default function OrderTable() {
         <Typography level="h2" component="h1">
           Data
         </Typography>
+
+        <div>
+          <Input type="search" onChange={handleSearchInput} />
+          <Button onClick={handleSearch}>Search</Button>
+        </div>
+
         <Button
           onClick={() => navigate("/createrecord")}
           color="primary"
@@ -351,7 +295,6 @@ export default function OrderTable() {
         variant="outlined"
         sx={{ width: "100%", boxShadow: "sm", borderRadius: "sm" }}
       >
-        {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
         <Table
           aria-labelledby="tableTitle"
           hoverRow
@@ -362,9 +305,6 @@ export default function OrderTable() {
             "& thead th:nth-child(1)": {
               width: "120px",
             },
-            //   '& thead th:nth-child(2)': {
-            //     width: '200px',
-            //   },
             "& thead th:nth-child(2)": {
               width: "120px",
             },
@@ -374,47 +314,28 @@ export default function OrderTable() {
             "& thead th:nth-child(4)": {
               width: "150px",
             },
-            "& tr > *:nth-child(n+6)": { textAlign: "center" },
+            "& tr > *:nth-child(n+4)": { textAlign: "center" },
           }}
         >
           <EnhancedTableHead
-            numSelected={selected.length}
+            // numSelected={selected.length}
             order={order}
             orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={data.length}
+            rowCount={countAll}
           />
           <tbody>
-            {stableSort(data, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((item, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`;
-
+            {stableSort(data, getComparator(order, orderBy)).map(
+              (item, index) => {
+                count++;
                 return (
-                  <tr
-                    //   onClick={(event) => handleClick(event, item.name)}
-                    //   role="checkbox"
-                    //   tabIndex={-1}
-                    key={item.index}
-                    //   style={
-                    //     isItemSelected
-                    //       ? ({
-                    //           '--TableCell-dataBackground':
-                    //             'var(--TableCell-selectedBackground)',
-                    //           '--TableCell-headBackground':
-                    //             'var(--TableCell-selectedBackground)',
-                    //         })
-                    //       : {}
-                    //   }
-                  >
-                    {/* <th id={labelId} scope="row">
-                    {item.index}
-                  </th> */}
-                    <td>{item.index}</td>
+                  <tr key={item._id}>
+                    <td align="center" valign="center">
+                      {count}
+                    </td>
                     <td>{item.fname}</td>
                     <td>{item.lname}</td>
-                    <td>{item.sex}</td>
+                    <td>{item.gender}</td>
                     <td>{item.email}</td>
                     <td>{item.phone_no}</td>
                     <td>{item.job_title}</td>
@@ -439,7 +360,7 @@ export default function OrderTable() {
                         aria-label="logout"
                         aria-haspopup="true"
                         onClick={() =>
-                          navigate(`/profile/${item._id}`, {
+                          navigate(`/userData/${item._id}`, {
                             state: { formData: item },
                           })
                         }
@@ -452,7 +373,8 @@ export default function OrderTable() {
                     </td>
                   </tr>
                 );
-              })}
+              }
+            )}
             {emptyRows > 0 && (
               <tr
                 style={{
@@ -486,13 +408,13 @@ export default function OrderTable() {
                       <Option value={25}>25</Option>
                     </Select>
                   </FormControl>
-                  {/* <Typography textAlign="center" sx={{ minWidth: 80 }}>
-                  {labelDisplayedRows({
-                    from: data.length === 0 ? 0 : page * rowsPerPage + 1,
-                    to: getLabelDisplayedRowsTo(),
-                    count: data.length === -1 ? -1 : data.length,
-                  })}
-                </Typography> */}
+                  <Typography textAlign="center" sx={{ minWidth: 80 }}>
+                    {labelDisplayedRows({
+                      from: countAll === 0 ? 0 : page * rowsPerPage + 1,
+                      to: getLabelDisplayedRowsTo(),
+                      count: countAll === -1 ? -1 : countAll,
+                    })}
+                  </Typography>
                   <Box sx={{ display: "flex", gap: 1 }}>
                     <IconButton
                       size="sm"
@@ -509,8 +431,8 @@ export default function OrderTable() {
                       color="neutral"
                       variant="outlined"
                       disabled={
-                        data.length !== -1
-                          ? page >= Math.ceil(data.length / rowsPerPage) - 1
+                        countAll !== -1
+                          ? page >= Math.ceil(countAll / rowsPerPage) - 1
                           : false
                       }
                       onClick={() => handleChangePage(page + 1)}

@@ -15,6 +15,7 @@ const CreateForm = () => {
   const navigate=useNavigate()
   const handleSubmit = async (e,data) => {
     e.preventDefault();
+    console.log("🚀 ~ handleSubmit ~ data:", data)
     try {
       const response = await axios.post("http://localhost:4999/addcustomer", {
         data,

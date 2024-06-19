@@ -15,8 +15,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import OrderTable from "../../components/OrderTable";
-import { Button} from "@mui/joy";
 import {useNavigate} from "react-router-dom"
 
 const drawerWidth = 240;
@@ -93,7 +91,7 @@ const Header = ({component:Component,flag}) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Persistent drawer
+            Bulk Upload Handler
           </Typography>
         </Toolbar>
       </AppBar>
@@ -129,6 +127,11 @@ const Header = ({component:Component,flag}) => {
             <ListItem disablePadding>
               <ListItemButton onClick={()=>navigate("/addcsv")}>
                 <ListItemText primary={"Add CSV"} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={()=>navigate("/csvdetails")}>
+                <ListItemText primary={"Bulk Upload Details"} />
               </ListItemButton>
             </ListItem>
         </List>

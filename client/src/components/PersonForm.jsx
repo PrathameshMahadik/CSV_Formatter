@@ -1,34 +1,50 @@
 import React from "react";
-import { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import { Button, TextField, Grid, Typography, MenuItem } from "@mui/material";
 
+const fields = [
+  { name: "email", label: "Email", required: true, type: "email" },
+  { name: "fname", label: "First Name", required: true },
+  { name: "lname", label: "Last Name", required: true },
+  {
+    name: "gender",
+    label: "Gender",
+    required: true,
+    select: true,
+    options: ["Male", "Female", "Other"],
+  },
+  { name: "phone_no", label: "Phone No.", required: true },
+  { name: "job_title", label: "Job Title", required: true },
+];
+
+const validationSchema = Yup.object(
+  fields.reduce((schema, field) => {
+    if (field.required) {
+      schema[field.name] = Yup.string().required(`${field.label} is required`);
+      if (field.type === "email") {
+        schema[field.name] = schema[field.name].email("Invalid email address");
+      }
+    }
+    return schema;
+  }, {})
+);
+
 const PersonForm = (props) => {
   const { formData, handleSubmit } = props;
-  const [data, setData] = useState(formData);
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: value,
-    });
-  };
 
-  const fields = [
-    { name: "email", label: "Email", required: true, type: "email" },
-    { name: "fname", label: "First Name", required: true },
-    { name: "lname", label: "Last Name", required: true },
-    {
-      name: "gender",
-      label: "Gender",
-      required: true,
-      select: true,
-      options: ["Male", "Female", "Other"],
+  const formik = useFormik({
+    initialValues: fields.reduce((values, field) => {
+      values[field.name] = formData[field.name] || "";
+      return values;
+    }, {}),
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values);
     },
-    { name: "phone_no", label: "Phone No.", required: true },
-    { name: "job_title", label: "Job Title", required: true },
-  ];
+  });
 
   const renderField = (field) => {
     if (field.select) {
@@ -40,8 +56,13 @@ const PersonForm = (props) => {
           fullWidth
           margin="normal"
           name={field.name}
-          value={data[field.name]}
-          onChange={handleChange}
+          value={formik.values[field.name]}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={
+            formik.touched[field.name] && Boolean(formik.errors[field.name])
+          }
+          helperText={formik.touched[field.name] && formik.errors[field.name]}
         >
           {field.options.map((option) => (
             <MenuItem key={option} value={option}>
@@ -60,8 +81,13 @@ const PersonForm = (props) => {
           label={field.label}
           name={field.name}
           type={field.type || "text"}
-          value={data[field.name]}
-          onChange={handleChange}
+          value={formik.values[field.name]}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={
+            formik.touched[field.name] && Boolean(formik.errors[field.name])
+          }
+          helperText={formik.touched[field.name] && formik.errors[field.name]}
         />
       );
     }
@@ -83,6 +109,7 @@ const PersonForm = (props) => {
           <Box
             component="form"
             noValidate
+            onSubmit={formik.handleSubmit}
             sx={{
               mt: 3,
               display: "flex",
@@ -93,83 +120,7 @@ const PersonForm = (props) => {
           >
             <Typography variant="h4" gutterBottom>
               Enter data
-            </Typography>{" "}
-            {/* <Grid container spacing={2} ml={20}>
-              <Grid item xs={10} sm={8}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email"
-                  name="email"
-                  value={data.email}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={8}>
-                <TextField
-                  autoComplete="given-name"
-                  name="fname"
-                  required
-                  fullWidth
-                  id="fname"
-                  label="First Name"
-                  autoFocus
-                  value={data.fname}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={8}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lname"
-                  label="Last Name"
-                  name="lname"
-                  autoComplete="family-name"
-                  value={data.lname}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={8}>
-                <TextField
-                  select
-                  label="Gender"
-                  fullWidth
-                  margin="normal"
-                  name="gender"
-                  value={data.gender}
-                  onChange={handleChange}
-                >
-                  <MenuItem value="Male">Male</MenuItem>
-                  <MenuItem value="Female">Female</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={8}>
-                <TextField
-                  name="phone_no"
-                  required
-                  fullWidth
-                  id="phone_no"
-                  label="Phone No."
-                  autoFocus
-                  value={data.phone_no}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={8}>
-                <TextField
-                  required
-                  fullWidth
-                  id="job_title"
-                  label="Job Title"
-                  name="job_title"
-                  value={data.job_title}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid> */}
+            </Typography>
             <Grid container spacing={2} ml={20}>
               {fields.map((field) => (
                 <Grid key={field.name} item xs={12} sm={8}>
@@ -177,12 +128,7 @@ const PersonForm = (props) => {
                 </Grid>
               ))}
             </Grid>
-            <Button
-              type="submit"
-              onClick={(e) => handleSubmit(e, data)}
-              variant="contained"
-              sx={{ mt: 6, mb: 5 }}
-            >
+            <Button type="submit" variant="contained" sx={{ mt: 6, mb: 5 }}>
               Send Data
             </Button>
           </Box>
