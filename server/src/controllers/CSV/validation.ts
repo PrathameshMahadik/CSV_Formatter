@@ -23,13 +23,13 @@ export const validatePagination = [
   query("fname").optional().isString().withMessage("fname must be a string"),
 ];
 
-export const customerValidator = [
-  body("data.job_title").notEmpty().withMessage("Job Title is required"),
-  body("data.fname").notEmpty().withMessage("First Name is required"),
-  body("data.lname").notEmpty().withMessage("Last Name is required"),
-  body("data.phone_no").notEmpty().withMessage("Phone No is required"),
-  body("data.gender").notEmpty().withMessage("Gender is required"),
-  body("data.email").isEmail().withMessage("Invalid email address"),
+export const customerValidator = [  
+  body("job_title").notEmpty().withMessage("Job Title is required"),
+  body("fname").notEmpty().withMessage("First Name is required"),
+  body("lname").notEmpty().withMessage("Last Name is required"),
+  body("phone_no").notEmpty().withMessage("Phone No is required"),
+  body("gender").notEmpty().withMessage("Gender is required"),
+  body("email").isEmail().withMessage("Invalid email address"),
 ];
 
 export const validateUpdateCustomer = [
@@ -38,10 +38,10 @@ export const validateUpdateCustomer = [
     .withMessage("_id is required")
     .isMongoId()
     .withMessage("_id must be a valid MongoDB ObjectId"),
-  body("data.job_title").notEmpty().withMessage("Job Title is required"),
-  body("data.fname").notEmpty().withMessage("First Name is required"),
-  body("data.lname").notEmpty().withMessage("Last Name is required"),
-  body("data.phone_no").notEmpty().withMessage("Phone No is required"),
-  body("data.gender").notEmpty().withMessage("Gender is required"),
-  body("data.email").isEmail().withMessage("Invalid email address"),
+  body("job_title").notEmpty().withMessage("Job Title is required"),
+  body("fname").notEmpty().withMessage("First Name is required"),
+  body("lname").notEmpty().withMessage("Last Name is required"),
+  body("phone_no").notEmpty().withMessage("Phone No is required"),
+  body("gender").notEmpty().withMessage("Gender is required"),
+  body("email").isEmail().withMessage("Invalid email address"),
 ];

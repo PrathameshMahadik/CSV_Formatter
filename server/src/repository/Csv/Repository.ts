@@ -16,7 +16,7 @@ export const totaluser = async () => {
   return await CSVSchema.countDocuments();
 };
 
-export const totalSameNameUsers = async (fname: string) => {
+export const totalSameNameUsers = async (fname: {}) => {
   return await CSVSchema.countDocuments({ fname });
 };
 

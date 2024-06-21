@@ -16,6 +16,7 @@ class csvController {
   };
 
   addCustomer = async (req: Request, res: Response,next: NextFunction): Promise<void> => {
+    console.log("🚀 ~ csvController ~ addCustomer= ~ req:", req.body)
     return await services.addRecord(req,res,next)
   };
 

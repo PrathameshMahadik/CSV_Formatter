@@ -106,10 +106,8 @@ class csvServices {
 
     try {
       const { _limit, _page, fname } = req.query as any;
-      console.log("🚀 ~ csvServices ~ searchData= ~ fname:", fname);
       const skip: number = (_page - 1) * _limit;
       const count = await totalSameNameUsers(fname);
-      console.log("🚀 ~ csvServices ~ getData= ~ count:", count);
       const data = await searchDataByName(skip, _limit, fname);
       res.status(200).json({
         message: "Data fetched successfully",
@@ -123,11 +121,10 @@ class csvServices {
 
   addRecord = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { data } = req.body;
       const uploadId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(
         "667177f421d7fc0b30abcdef"
       );
-      const user = await addUser({ csvId: uploadId, ...data });
+      const user = await addUser({ csvId: uploadId, ...req.body });
       res
         .status(201)
         .json({ message: "Customer added successfully", user: user });
@@ -139,9 +136,7 @@ class csvServices {
   updateOneRecord = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { _id } = req.params;
-      const { data } = req.body;
-      console.log("🚀 ~ csvServices ~ addRecord= ~ data:", data, _id);
-      const user = await updateUser(_id, { ...data });
+      const user = await updateUser(_id, { ...req.body });
       res
         .status(201)
         .json({ message: "Customer Record Updated successfully", user: user });

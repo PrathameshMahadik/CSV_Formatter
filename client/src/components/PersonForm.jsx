@@ -43,6 +43,7 @@ const PersonForm = (props) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       handleSubmit(values);
+      console.log("🚀 ~ PersonForm ~ values:", values)
     },
   });
 

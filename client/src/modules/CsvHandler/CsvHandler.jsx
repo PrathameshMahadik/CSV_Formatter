@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Button, Grid, Input, Paper, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { CloudUploadIcon } from "../../components/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload"; // Assuming you are importing CloudUploadIcon correctly here
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const CsvHandler = () => {
-  const [csv, setCsv] = useState();
   const navigate = useNavigate();
+  const jwt = `Bearer ${process.env.REACT_APP_JWT_TOKEN}`;
 
   const validationSchema = Yup.object().shape({
     csvFile: Yup.mixed().required("A CSV file is required"),
@@ -23,8 +23,16 @@ const CsvHandler = () => {
       setSubmitting(true);
       try {
         const formData = new FormData();
-        formData.append("csvFile", csv);
-        const response = await axios.post("http://localhost:4999/create", formData);
+        formData.append("csvFile", values.csvFile); // Use formik values here
+        const response = await axios.post(
+          "http://localhost:4999/create",
+          formData,
+          {
+            headers: {
+              authorization: jwt,
+            },
+          }
+        );
         console.log("🚀 ~ response:", response);
         if (response.status === 201) {
           navigate("/");
@@ -39,7 +47,6 @@ const CsvHandler = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setCsv(file);
     formik.setFieldValue("csvFile", file);
   };
 
@@ -79,7 +86,9 @@ const CsvHandler = () => {
                   id="csvFile"
                   onChange={handleFileChange}
                   onBlur={formik.handleBlur}
-                  error={formik.touched.csvFile && Boolean(formik.errors.csvFile)}
+                  error={
+                    formik.touched.csvFile && Boolean(formik.errors.csvFile)
+                  }
                 />
                 {formik.touched.csvFile && formik.errors.csvFile && (
                   <Typography color="error" variant="body2">
@@ -89,10 +98,8 @@ const CsvHandler = () => {
               </Grid>
               <Grid item xs={12} sm={8} ml={15}>
                 <Button
-                  component="label"
                   type="submit"
                   variant="contained"
-                  tabIndex={-1}
                   sx={{ mt: 6, mb: 5 }}
                   startIcon={<CloudUploadIcon />}
                   disabled={formik.isSubmitting}

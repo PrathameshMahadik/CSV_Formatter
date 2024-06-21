@@ -174,19 +174,22 @@ export default function OrderTable() {
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
-  // const [data, setData] = useState([]);
   const { data, setData } = useAuth();
   const [countAll, setAllCount] = useState(15);
   const navigate = useNavigate();
   const [search, setSearch] = useState(false);
   let count = countAll === 0 ? 0 : page * rowsPerPage;
-  
+
+  const jwt = `Bearer ${process.env.REACT_APP_JWT_TOKEN}`;
   const fetchData = async () => {
     try {
       const response = await axios.get(`http://localhost:4999/data/`, {
+        headers: {
+          authorization: jwt,
+        },
         params: {
           _limit: rowsPerPage,
-          _page: page+1,
+          _page: page + 1,
         },
       });
       setData(response.data.data);
@@ -209,9 +212,12 @@ export default function OrderTable() {
     setSearch(true);
     try {
       const response = await axios.get(`http://localhost:4999/search/`, {
+        headers: {
+          authorization: jwt,
+        },
         params: {
           _limit: rowsPerPage,
-          _page: page+1,
+          _page: page + 1,
           fname: searchText,
         },
       });
@@ -235,7 +241,7 @@ export default function OrderTable() {
   };
 
   const handleChangeRowsPerPage = (event, newValue) => {
-    setRowsPerPage(parseInt(newValue.toString(), 10));
+    setRowsPerPage(parseInt(newValue, 10));
     setPage(0);
   };
 
@@ -318,7 +324,6 @@ export default function OrderTable() {
           }}
         >
           <EnhancedTableHead
-            // numSelected={selected.length}
             order={order}
             orderBy={orderBy}
             onRequestSort={handleRequestSort}
@@ -404,8 +409,8 @@ export default function OrderTable() {
                       value={rowsPerPage}
                     >
                       <Option value={15}>15</Option>
-                      <Option value={20}>20</Option>
-                      <Option value={25}>25</Option>
+                      <Option value={30}>30</Option>
+                      <Option value={50}>50</Option>
                     </Select>
                   </FormControl>
                   <Typography textAlign="center" sx={{ minWidth: 80 }}>

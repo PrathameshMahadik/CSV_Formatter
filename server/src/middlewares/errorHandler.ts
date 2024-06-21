@@ -22,6 +22,7 @@ const errorHandler = (err:any, req: Request, res: Response, next: NextFunction) 
   if (err instanceof CustomError) {
     errorResponse.statusCode = err.statusCode;
     errorResponse.message = err.message;
+    console.log("🚀 ~ errorHandler ~ err.message:", err.message)
   } else {
     console.error("Unhandled Error:", err);
   }
