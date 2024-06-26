@@ -14,9 +14,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Paper from "@mui/material/Paper";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import FilterListIcon from "@mui/material/Icon/Icon";
 import { visuallyHidden } from "@mui/utils";
-import DeleteIcon from "@mui/material/Icon/Icon";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -97,7 +95,5 @@ export {
   Modal,
   TextField,
   Button,
-  DeleteIcon,
-  FilterListIcon,
   visuallyHidden,
 };

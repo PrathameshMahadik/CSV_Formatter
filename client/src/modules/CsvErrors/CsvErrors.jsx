@@ -230,7 +230,6 @@ export default function CsvErrors() {
       });
       setData(response.data.data);
       setAllCount(response.data.count);
-      console.log("🚀 ~ fetchData ~ response.data.data:", response.data.data);
     } catch (error) {
       console.log("🚀 ~ fetchData ~ error:", error);
     }
@@ -242,7 +241,6 @@ export default function CsvErrors() {
 
   const handleChangePage = (newPage) => {
     setPage(newPage);
-    console.log("🚀 ~ handleChangePage ~ newPage:", newPage);
   };
 
   const handleChangeRowsPerPage = (event, newValue) => {

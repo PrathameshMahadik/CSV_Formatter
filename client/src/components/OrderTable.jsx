@@ -15,8 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import axios from "axios";
 import { Button, CssBaseline, Input } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { EditIcon, VisibilityIcon } from "../components/material";
-import { useAuth } from "../contexts/useAuth";
+import { EditIcon, VisibilityIcon } from "./material";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 
@@ -103,7 +102,74 @@ const headCells = [
   },
 ];
 
-function EnhancedTableHead(props) {
+// function EnhancedTableHead(props) {
+//   const { order, orderBy, onRequestSort } = props;
+//   const createSortHandler = (property) => (event) => {
+//     onRequestSort(event, property);
+//   };
+
+//   return (
+//     <thead>
+//       <tr>
+//         {headCells.map((headCell) => {
+//           const active = orderBy === headCell.id;
+//           return (
+//             <th
+//               key={headCell.id}
+//               aria-sort={
+//                 active
+//                   ? { asc: "ascending", desc: "descending" }[order]
+//                   : undefined
+//               }
+//               align="center"
+//               valign="center"
+//             >
+//               <Link
+//                 underline="none"
+//                 color="neutral"
+//                 textColor={active ? "primary.plainColor" : undefined}
+//                 component="button"
+//                 onClick={createSortHandler(headCell.id)}
+//                 fontWeight="lg"
+//                 startDecorator={
+//                   headCell.numeric ? (
+//                     <ArrowDownwardIcon sx={{ opacity: active ? 1 : 0 }} />
+//                   ) : null
+//                 }
+//                 endDecorator={
+//                   !headCell.numeric ? (
+//                     <ArrowDownwardIcon sx={{ opacity: active ? 1 : 0 }} />
+//                   ) : null
+//                 }
+//                 sx={{
+//                   "& svg": {
+//                     transition: "0.2s",
+//                     transform:
+//                       active && order === "desc"
+//                         ? "rotate(0deg)"
+//                         : "rotate(180deg)",
+//                   },
+//                   "&:hover": { "& svg": { opacity: 1 } },
+//                 }}
+//               >
+//                 {headCell.label}
+//                 {active ? (
+//                   <Box component="span" sx={visuallyHidden}>
+//                     {order === "desc"
+//                       ? "sorted descending"
+//                       : "sorted ascending"}
+//                   </Box>
+//                 ) : null}
+//               </Link>
+//             </th>
+//           );
+//         })}
+//       </tr>
+//     </thead>
+//   );
+// }
+
+const EnhancedTableHead = React.memo((props) => {
   const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -122,6 +188,8 @@ function EnhancedTableHead(props) {
                   ? { asc: "ascending", desc: "descending" }[order]
                   : undefined
               }
+              align="center"
+              valign="center"
             >
               <Link
                 underline="none"
@@ -166,7 +234,7 @@ function EnhancedTableHead(props) {
       </tr>
     </thead>
   );
-}
+});
 
 export default function OrderTable() {
   const [order, setOrder] = useState("asc");
@@ -174,7 +242,7 @@ export default function OrderTable() {
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
-  const { data, setData } = useAuth();
+  const [data, setData] = useState([]);
   const [countAll, setAllCount] = useState(15);
   const navigate = useNavigate();
   const [search, setSearch] = useState(false);
@@ -194,7 +262,6 @@ export default function OrderTable() {
       });
       setData(response.data.data);
       setAllCount(response.data.count);
-      console.log("🚀 ~ fetchData ~ response.data.data:", response.data.data);
     } catch (error) {
       console.log("🚀 ~ fetchData ~ error:", error);
     }
@@ -233,11 +300,9 @@ export default function OrderTable() {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  console.log("🚀 ~ handleChangePage ~ newPage:", page);
 
   const handleChangePage = (newPage) => {
     setPage(newPage);
-    console.log("🚀 ~ handleChangePage ~ newPage:", newPage);
   };
 
   const handleChangeRowsPerPage = (event, newValue) => {
@@ -312,13 +377,13 @@ export default function OrderTable() {
               width: "120px",
             },
             "& thead th:nth-child(2)": {
-              width: "120px",
+              width: "150px",
             },
             "& thead th:nth-child(3)": {
               width: "150px",
             },
             "& thead th:nth-child(4)": {
-              width: "150px",
+              width: "120px",
             },
             "& tr > *:nth-child(n+4)": { textAlign: "center" },
           }}

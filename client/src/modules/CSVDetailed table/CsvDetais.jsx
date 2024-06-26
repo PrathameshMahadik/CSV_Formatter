@@ -29,7 +29,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
   },
@@ -54,7 +53,6 @@ export default function CsvDetails() {
       });
       setData(response.data.data);
       setAllCount(response.data.count);
-      console.log("🚀 ~ fetchData ~ response.data.data:", response.data.data);
     } catch (error) {
       console.log("🚀 ~ fetchData ~ error:", error);
     }
@@ -66,7 +64,6 @@ export default function CsvDetails() {
 
   const handleChangePage = (newPage) => {
     setPage(newPage);
-    console.log("🚀 ~ handleChangePage ~ newPage:", newPage);
   };
 
   const handleChangeRowsPerPage = (event, newValue) => {
@@ -104,10 +101,10 @@ export default function CsvDetails() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row) => {
+          {data.map((row,index) => {
             count++
             return(
-            <StyledTableRow key={row.name}>
+            <StyledTableRow key={index}>
               <StyledTableCell component="th" scope="row" align="center">
                 {count}
               </StyledTableCell>

@@ -11,7 +11,7 @@ const EditForm = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:4999/updaterecord/${formData._id}`,
         values,
         {
@@ -20,7 +20,6 @@ const EditForm = () => {
           },
         }
       );
-      console.log("🚀 ~ handleSubmit ~ response:", response);
       navigate("/");
     } catch (error) {
       console.log("🚀 ~ handleSubmit ~ error:", error);

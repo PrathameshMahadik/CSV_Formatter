@@ -28,7 +28,6 @@ export const customerValidator = [
   body("fname").notEmpty().withMessage("First Name is required"),
   body("lname").notEmpty().withMessage("Last Name is required"),
   body("phone_no").notEmpty().withMessage("Phone No is required"),
-  body("gender").notEmpty().withMessage("Gender is required"),
   body("email").isEmail().withMessage("Invalid email address"),
 ];
 

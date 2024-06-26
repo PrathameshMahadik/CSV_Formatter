@@ -16,9 +16,8 @@ const CreateForm = () => {
   const jwt = `Bearer ${process.env.REACT_APP_JWT_TOKEN}`;
 
   const handleSubmit = async (values) => {
-    console.log("🚀 ~ handleSubmit ~ values:", values);
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:4999/addcustomer",
         values,
         {
@@ -27,7 +26,6 @@ const CreateForm = () => {
           },
         }
       );
-      console.log("🚀 ~ handleSubmit ~ response:", response);
       navigate("/");
     } catch (error) {
       console.log("🚀 ~ handleSubmit ~ error:", error);

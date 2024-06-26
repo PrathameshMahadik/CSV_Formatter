@@ -43,7 +43,6 @@ const PersonForm = (props) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       handleSubmit(values);
-      console.log("🚀 ~ PersonForm ~ values:", values)
     },
   });
 
@@ -129,7 +128,12 @@ const PersonForm = (props) => {
                 </Grid>
               ))}
             </Grid>
-            <Button type="submit" variant="contained" sx={{ mt: 6, mb: 5 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ mt: 6, mb: 5 }}
+              aria-label="Send Data"
+            >
               Send Data
             </Button>
           </Box>

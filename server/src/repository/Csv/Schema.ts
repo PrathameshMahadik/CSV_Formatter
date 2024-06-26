@@ -6,8 +6,8 @@ const csvSchema = new Schema<CsvDocument>(
   {
     csvId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: BulkUpload,
-      required: true,
+      // ref: BulkUpload,
+      required: false,
     },
     fname: {
       type: String,
@@ -19,24 +19,24 @@ const csvSchema = new Schema<CsvDocument>(
     },
     gender: {
       type: String,
-      required: true,
+      default:"Male"
     },
     email: {
-        type: String,
-        required: true,
-      },
+      type: String,
+      required: true,
+    },
     phone_no: {
       type: String,
-      required: true
+      required: true,
     },
     job_title: {
-        type: String,
-        required: true,
-      },
-      isDeleted:{
-        type:Boolean,
-        default: false,
-      }
+      type: String,
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

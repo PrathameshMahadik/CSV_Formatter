@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button, Grid, Input, Paper, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload"; // Assuming you are importing CloudUploadIcon correctly here
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +23,7 @@ const CsvHandler = () => {
       setSubmitting(true);
       try {
         const formData = new FormData();
-        formData.append("csvFile", values.csvFile); // Use formik values here
+        formData.append("csvFile", values.csvFile); 
         const response = await axios.post(
           "http://localhost:4999/create",
           formData,
@@ -33,7 +33,6 @@ const CsvHandler = () => {
             },
           }
         );
-        console.log("🚀 ~ response:", response);
         if (response.status === 201) {
           navigate("/");
         }
@@ -89,6 +88,7 @@ const CsvHandler = () => {
                   error={
                     formik.touched.csvFile && Boolean(formik.errors.csvFile)
                   }
+                  inputProps={{ "data-testid": "csvFileInput" }}
                 />
                 {formik.touched.csvFile && formik.errors.csvFile && (
                   <Typography color="error" variant="body2">
