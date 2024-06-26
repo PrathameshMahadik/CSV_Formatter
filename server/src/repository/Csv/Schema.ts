@@ -6,7 +6,6 @@ const csvSchema = new Schema<CsvDocument>(
   {
     csvId: {
       type: mongoose.Schema.Types.ObjectId,
-      // ref: BulkUpload,
       required: false,
     },
     fname: {

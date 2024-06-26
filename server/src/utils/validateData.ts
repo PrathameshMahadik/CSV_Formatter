@@ -1,6 +1,5 @@
 const Joi = require('joi');
 
-// Define the schema for required fields
 const schema = Joi.object({
   Index: Joi.string().required(),
   'First Name': Joi.string().required(),
@@ -24,7 +23,6 @@ const validateData = (data:any[]) => {
 
 const jsonArray = [
   {
-    "Index": "1",
     "First Name": "John",
     "Last Name": "Doe",
     "Gender": "Male",
@@ -33,13 +31,11 @@ const jsonArray = [
     "Job Title": "Engineer",
   },
   {
-    "Index": "2",
     "First Name": "Jane",
     "Last Name": "Smith",
     "Gender": "Female",
     "Email": "jane.smith@example.com",
     "Phone": "9876543210",
-    // Missing "Job Title"
   }
 ];
 

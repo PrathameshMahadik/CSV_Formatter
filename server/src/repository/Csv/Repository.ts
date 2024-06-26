@@ -3,12 +3,12 @@ import { CsvDocument } from "./IModel";
 import { logger } from "@storybook/node-logger";
 
 export const uploadData = async (userData: {}) => {
-    // logger
+  logger.info("CSV repo ::::>>>>>> inside upload csv data");
   return await CSVSchema.insertMany(userData);
 };
 
 export const getAllData = async (skip: number, _limit: number) => {
-  logger.info('fetch Data repo ::::>>>>>> inside fetch data repo');
+  logger.info("CSV repo ::::>>>>>> inside fetch data");
   return await CSVSchema.find({ isDeleted: false })
     .sort({ index: 1 })
     .skip(skip)
@@ -16,18 +16,17 @@ export const getAllData = async (skip: number, _limit: number) => {
 };
 
 export const totaluser = async () => {
-  logger.info('Total user Count repo ::::>>>>>> ');
+  logger.info("CSV repo ::::>>>>>> inside total user Count");
   return await CSVSchema.countDocuments();
 };
 
 export const totalSameNameUsers = async (fname: {}) => {
-  logger.info('fetch Data repo ::::>>>>>> inside fetch data repo');
+  logger.info("CSV repo ::::>>>>>> inside search count");
   return await CSVSchema.countDocuments({ fname });
 };
 
 export const addUser = async (data: CsvDocument) => {
-    // logger
-
+  logger.info("CSV repo ::::>>>>>> inside add new user manually");
   const user = new CSVSchema({
     ...data,
   });
@@ -35,7 +34,7 @@ export const addUser = async (data: CsvDocument) => {
 };
 
 export const updateUser = async (_id: any, data: CsvDocument) => {
-    // logger
+  logger.info("CSV repo ::::>>>>>> inside update user");
   return await CSVSchema.findByIdAndUpdate(_id, { ...data }, { new: true });
 };
 
@@ -44,7 +43,7 @@ export const searchDataByName = async (
   _limit: number,
   fname: string
 ) => {
-    // logger
+  logger.info("CSV repo ::::>>>>>> inside search user by name");
   return await CSVSchema.find({ isDeleted: false, fname })
     .sort({ index: 1 })
     .skip(skip)
