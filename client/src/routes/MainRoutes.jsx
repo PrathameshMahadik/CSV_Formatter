@@ -1,5 +1,5 @@
 import { BrowserRouter as Router } from "react-router-dom";
-import Header from "../modules/Header/AppBar";
+import Header from "../modules/Header/Header";
 
 const MainRoutes = () => {
   return (
@@ -8,5 +8,4 @@ const MainRoutes = () => {
     </Router>
   );
 };
-
 export default MainRoutes;

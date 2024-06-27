@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import "@testing-library/jest-dom/extend-expect";
 import { MemoryRouter } from "react-router-dom";
-import Header from "./AppBar";
+import Header from "./Header";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -27,10 +27,6 @@ describe("Header Component", () => {
         <Header />
       </MemoryRouter>
     );
-
-    // await waitFor(() => {
-    //     expect(screen.queryByText("Home")).not.toBeInTheDocument();
-    //   });
 
     fireEvent.click(screen.getByLabelText("open drawer"));
 

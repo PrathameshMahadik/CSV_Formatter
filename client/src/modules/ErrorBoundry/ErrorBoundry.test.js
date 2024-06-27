@@ -1,10 +1,9 @@
-import React from "react"; 
-import { render, screen, fireEvent } from "@testing-library/react";
+import React from "react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import ErrorBoundary from "./ErrorBoundry";
 
-// Helper component to simulate an error
 const ProblemChild = () => {
   throw new Error("Test error");
 };
@@ -37,25 +36,4 @@ describe("ErrorBoundary Component", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Go Back")).toBeInTheDocument();
   });
-
-//   test("resets error state on link click", () => {
-//     render(
-//       <MemoryRouter initialEntries={["/error", "/about"]}>
-//         <Routes>
-//           <Route path="/about" element={<div>About Page</div>} />
-//           <Route
-//             path="/error"
-//             element={
-//               <ErrorBoundary>
-//                 <ProblemChild />
-//               </ErrorBoundary>
-//             }
-//           />
-//         </Routes>
-//       </MemoryRouter>
-//     );
-//     fireEvent.click(screen.getByText("Go Back"));
-
-//     expect(screen.getByText("About Page")).toBeInTheDocument();
-//   });
 });

@@ -40,45 +40,12 @@ describe("CsvErrors Component", () => {
 
   test("renders table with data", async () => {
     renderWithRouter(<CsvErrors />, { route: "/csvDetails/1" });
-    
+
     expect(screen.getByText("Index")).toBeInTheDocument();
     expect(screen.getByText("Row No.")).toBeInTheDocument();
 
     await waitFor(() => {
-        expect(screen.getByText("Error 1")).toBeInTheDocument();
+      expect(screen.getByText("Error 1")).toBeInTheDocument();
     });
-
-    // expect(screen.getByText("Error 2")).toBeInTheDocument();
-    // expect(screen.getByText("Error 3")).toBeInTheDocument();
   });
-
-//   test("changes rows per page", async () => {
-//     renderWithRouter(<CsvErrors />, { route: "/csvDetails/1" });
-
-//     await waitFor(() => {
-//       expect(screen.getByText("Error 1")).toBeInTheDocument();
-//     });
-
-//     fireEvent.change(screen.getByLabelText("Rows per page:"), {
-//       target: { value: 20 },
-//     });
-
-//     await waitFor(() => {
-//       expect(mockAxios.history.get[1].params._limit).toBe(20);
-//     });
-//   });
-
-//   test("changes page", async () => {
-//     renderWithRouter(<CsvErrors />, { route: "/csvDetails/1" });
-
-//     await waitFor(() => {
-//       expect(screen.getByText("Error 1")).toBeInTheDocument();
-//     });
-
-//     fireEvent.click(screen.getByLabelText("Go to next page"));
-
-//     await waitFor(() => {
-//       expect(mockAxios.history.get[1].params._page).toBe(2);
-//     });
-//   });
 });

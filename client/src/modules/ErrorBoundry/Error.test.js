@@ -46,7 +46,6 @@ describe("Error Component", () => {
     render(
       <MemoryRouter history={history}>
         <Routes>
-          {/* <Route path="/" element={<div>Home Page</div>} /> */}
           <Route path="*" element={<Error />} />
         </Routes>
       </MemoryRouter>

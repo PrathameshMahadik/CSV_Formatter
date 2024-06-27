@@ -1,6 +1,6 @@
 import React from "react";
-import MainRoutes from "./routes/MainRoutes";
 import ErrorBoundary from "./modules/ErrorBoundry/ErrorBoundry";
+import MainRoutes from "./routes/MainRoutes";
 
 const App = () => {
   return (
@@ -11,4 +11,3 @@ const App = () => {
 };
 
 export default App;
-

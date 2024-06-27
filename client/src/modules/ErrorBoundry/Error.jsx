@@ -1,5 +1,11 @@
 import React from "react";
-import { Box, Button, Container, Typography, Grid } from "../../components/material";
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  Grid,
+} from "../../components/material";
 import { useNavigate } from "react-router-dom";
 
 const Error = () => {

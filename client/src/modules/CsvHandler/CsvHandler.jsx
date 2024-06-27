@@ -23,7 +23,7 @@ const CsvHandler = () => {
       setSubmitting(true);
       try {
         const formData = new FormData();
-        formData.append("csvFile", values.csvFile); 
+        formData.append("csvFile", values.csvFile);
         const response = await axios.post(
           "http://localhost:4999/create",
           formData,

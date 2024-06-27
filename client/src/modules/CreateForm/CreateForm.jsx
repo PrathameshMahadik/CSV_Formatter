@@ -17,15 +17,11 @@ const CreateForm = () => {
 
   const handleSubmit = async (values) => {
     try {
-      await axios.post(
-        "http://localhost:4999/addcustomer",
-        values,
-        {
-          headers: {
-            authorization: jwt,
-          },
-        }
-      );
+      await axios.post("http://localhost:4999/addcustomer", values, {
+        headers: {
+          authorization: jwt,
+        },
+      });
       navigate("/");
     } catch (error) {
       console.log("🚀 ~ handleSubmit ~ error:", error);
